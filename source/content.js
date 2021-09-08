@@ -1,5 +1,4 @@
 chrome.runtime.onMessage.addListener(gotMessage);
-let counter = 0;
 
 function gotMessage(message, sender, sendResponse) {
     if (message.url.includes('vk.com/im' && '91050183')) {
