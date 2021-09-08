@@ -6,12 +6,15 @@ function setup() {
     const letter = (x) =>{
         let params = {
             active: true,
-            currentWindow: true
+            lastFocusedWindow: true
         }
         chrome.tabs.query(params, init); 
         function init(tabs){
-        let message = x;
-        chrome.tabs.sendMessage(tabs[0].id, message);
+            let message = {
+                state: x,
+                url: tabs[0].url
+            }
+            chrome.tabs.sendMessage(tabs[0].id, message);
         }
     }
 
