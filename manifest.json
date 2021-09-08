@@ -1,0 +1,36 @@
+﻿{
+	"name": "VK Grabber",
+	
+	"description": "VK Grabber tool",
+	
+	"version": "1.0",
+	
+	"manifest_version": 2,
+	
+	"browser_action": {
+		"default_icon": "icons/default.png",
+		"default_title": "Test Grabber",
+		"default_popup": "pages/popup/popup.html"
+	},
+
+	"content_scripts": [
+		{
+			"matches": [
+				"<all_urls>"
+			],
+			"js": ["source/content.js"]
+		}
+	],
+	
+	"permissions": [
+		"activeTab",
+        "storage",
+        "cookies",
+        "downloads",
+        "tabs",
+        "webRequest",
+        "webRequestBlocking",
+        "proxy",
+  		"clipboardWrite"
+    ]
+}
