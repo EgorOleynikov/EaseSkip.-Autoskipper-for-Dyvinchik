@@ -1,6 +1,6 @@
 const startButton = document.getElementById("pupup-start-button");
 const stopButton = document.getElementById("popup-stop-button");
-const ageInput = document.getElementById("ageInput");
+const ageInput = document.getElementById("ageInput").value;
 
 ageInput.oninput = function() { // counter logick
     if (this.value > 99) {this.value = 99};
@@ -8,7 +8,8 @@ ageInput.oninput = function() { // counter logick
 }
 
 var htmlStates = { // sends as message
-    state: false
+    state: false,
+    ageInput: ageInput
 }
 
 function letter(htmlStates) { // принимает объект состояний кнопок
@@ -18,11 +19,8 @@ function letter(htmlStates) { // принимает объект состоян�
     }
     chrome.tabs.query(params, init); 
     function init(tabs){
-        let message = {
-            state: htmlStates.state,
-            url: tabs[0].url
-        }
-        chrome.tabs.sendMessage(tabs[0].id, message);
+        htmlStates.url = tabs[0].url;
+        chrome.tabs.sendMessage(tabs[0].id, htmlStates);
     }
 }
 
