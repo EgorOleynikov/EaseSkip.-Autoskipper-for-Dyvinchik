@@ -1,21 +1,36 @@
+/*
+BUGS:
+For some reason skips all quers despite age. Heeds stop button to be added.
+
+TO DO LIST:
+Identification of the questionnaire by the length of the base64 string and 5 characters from it.
+Processing questionnaires without photos, processing bot messages.
+
+*/
+
 chrome.runtime.onMessage.addListener(gotMessage);
+
 var ageObj = new Object(); // stores frequency of appearing certain age
 var imgBase64Arr = [];
-var messageBox = document.getElementsByClassName("_im_peer_history im-page-chat-contain")[0]; // observer's taget
+var messageBox; // observer's taget
 var props = {
     childList: true
 };
+
+window.onerror = function(message, source, lineno, colno, error) {
+    for (argument of arguments) {
+        console.log(argument)
+    }
+}
+
 var observer = new MutationObserver(function(mutations) {
     console.log(mutations)
     for (let mutation of mutations) {
-        if ((mutation.addedNodes.length > 0) && (!mutation.nextSibling) && (mutation.addedNodes[0].innerText.includes("Нашел кое-кого для тебя, смотри:"))) {
-            var regex = /(^(?:\S+\s+\n?){1,2})/
-            if (regex.exec(mutation.addedNodes[0].innerText)[0] == 'Леонардо Дайвинчик ') {
-                console.log('some suspesious text')
-                setTimeout(function() {
-                    gotMessage("observerCallback")
-                }, 5000)
-            }
+        if ((mutation.addedNodes.length > 0) && (!mutation.nextSibling) && (mutation.addedNodes[0].innerText.includes("Нашел кое-кого для тебя, смотри:")) && (/(^(?:\S+\s+\n?){1,2})/.exec(mutation.addedNodes[0].innerText)[0] == 'Леонардо Дайвинчик ')) {
+            console.log('some suspesious text')
+            setTimeout(function() {
+                gotMessage("observerCallback")
+            }, 10000)
         }
     }
 });
@@ -28,12 +43,14 @@ function gotMessage(message, sender, sendResponse) {
         var linesArr = currentQuestionnairesText.split(', '); // lines of text separated by comma
         var imagePic = currentQuestionnaire.getElementsByClassName("page_post_sized_thumbs clear_fix")[0].getElementsByTagName("a")[0] //.innerHTML;
         var skipBtn = document.getElementsByClassName("Button Button--negative Button--size-m Button--wide Button--overflow BotButton BotButton--text")[0];
+        messageBox = document.getElementsByClassName("_im_peer_history im-page-chat-contain")[0];
         var currentImgBase64;
         var currentAge;
         var closeBtn;
         var imagePicSrc;
 
         imagePic.click()
+
         function mainFunction(imagePicSrc) {
 
             function toDataURL(src) {
@@ -48,31 +65,35 @@ function gotMessage(message, sender, sendResponse) {
                     ctx.drawImage(this, 0, 0);
                     dataURL = canvas.toDataURL('image/jpeg', .8);
                     currentImgBase64 =  dataURL;
-                    console.log(dataURL)
+                    console.log(currentImgBase64)
+                    console.log(typeof(currentImgBase64))
+                    console.log(currentImgBase64[0])
                 };
                 img.src = src;
                 }
             toDataURL(imagePicSrc)
             console.log(imagePicSrc)
     
-            if (imgBase64Arr.includes(currentImgBase64) === false) { // main thread
-                for (i = 0; i < linesArr.length; i++) {   // age pusher
+            if ((imgBase64Arr.includes(currentImgBase64)) === false) { // if no such id are in the arr
+                for (i = 0; i < linesArr.length; i++) { // age pusher
                     if (isNaN(linesArr[i]) === false) {
                         if (ageObj[linesArr[i]]) {
                             ageObj[linesArr[i]] += 1;
                         } else {ageObj[linesArr[i]] = 1;}
-                        currentAge = linesArr[i];
+                        currentAge = parseInt(linesArr[i], 10);
                     }
                     linesArr[i] = linesArr[i].replace(/\n/g, ' ');
                 }
                 if (currentAge < 16) { // skip btn press
+                    console.log(typeof(currentAge))
+                    console.log(typeof(16))
                     console.log(currentAge)
                     skipBtn.click();
                 }
                 imgBase64Arr.push(currentImgBase64);
             } else {
                 // Things that ext does when qestrs repeats
-                skipBtn.click()
+                //skipBtn.click()
                 console.log('[error:02] Questionnaire repeat')
             }
             
@@ -87,13 +108,13 @@ function gotMessage(message, sender, sendResponse) {
                 if ((document.getElementsByClassName("clear_fix pv_photo_wrap")[0] != undefined) && (document.getElementsByClassName("pv_close_btn")[0] != undefined) && (document.getElementById("pv_photo").getElementsByTagName("img")[0].complete)) {
                     imagePicSrc = document.getElementById("pv_photo").getElementsByTagName("img")[0].src;
                     closeBtn = document.getElementsByClassName("pv_close_btn")[0];
-                    console.log(closeBtn)
                     closeBtn.click()
                     clearInterval(checkExist)
                     callback(imagePicSrc)
                 } else console.log("[debugger] Element wasn't loaded yet.")
             }, 150);
         }
+
         callFunction(mainFunction)
         observer.observe(messageBox, props)
 

@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Popup</title>
     <style>
+        body{
+            height: 270px;
+            width: 200px;
+        }
         button {
             margin: 10px;
             width: 137px;
@@ -16,6 +20,10 @@
 <body>
     <button id="pupup-start-button">Start</button>
     <button id="popup-stop-button">Stop</button>
+    <form>
+        <label for="ageInput">Minimal Age</label>
+        <input type="number" id="ageInput" min="15"  max="99" value="15" required>
+    </form>
     <script src="popup.js"></script>
 </body>
 </html>
