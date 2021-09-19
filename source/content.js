@@ -1,50 +1,58 @@
 /*
 BUGS:
 [solved] For some reason skips all quers despite age. Heeds stop button to be added. :age was in string format
+Popup refreshes input data when closed. Adding localStarage to it might solve the problem.
+Stop button could do better.
 Not always closes big pictures
 
 TO DO LIST:
-Identification of the questionnaire by the length of the base64 string and 5 characters from it.
 Processing questionnaires without photos, processing bot messages.
-Add input age handler.
-Add delay choose.
 
 ADDED:
 Promise waiting added, bug fixing, so far functionality is quite on the level I wanted it at the beginning but I've got some fancy things to be added.
+Identification of the questionnaire by the length of the base64 string and 5 characters from it.
+Added input age handler.
+Added delay choose.
+Two-way messages added.
 */
 
 chrome.runtime.onMessage.addListener(messageCheck);
+
+var ageObj = new Object(); // stores frequency of appearing certain age
+var messageBox; // observer's taget
+var props = {
+    childList: true
+};
+var htmlStates;
+// htmlStates.delayInput = 1000;
 
 function messageCheck(message) { //message sorter
     if (message.state === true) {
         gotMessage(message)
     }
+    if (typeof(message.state) === "request") {
+        htmlStates = message;
+        console.log(htmlStates)
+    }
     if (message.state === false) {
-        observer.disconnect
+        observer.disconnect();
+        console.log("observer has been disconnected")
     }
 }
-
-var ageObj = new Object(); // stores frequency of appearing certain age
-var imgBase64Arr = [];
-var messageBox; // observer's taget
-var props = {
-    childList: true
-};
-
 // window.onerror = function(message, source, lineno, colno, error) {
 //     for (argument of arguments) {
 //         console.log(argument)
 //     }
 // }
-
-var observer = new MutationObserver(function(mutations) {
+var observer = new MutationObserver(mutations => {
     console.log(mutations)
     for (let mutation of mutations) {
         if ((mutation.addedNodes.length > 0) && (!mutation.nextSibling) && (mutation.addedNodes[0].innerText.includes("Нашел кое-кого для тебя, смотри:")) && (/(^(?:\S+\s+\n?){1,2})/.exec(mutation.addedNodes[0].innerText)[0] == 'Леонардо Дайвинчик ')) {
             console.log('some suspesious text')
             setTimeout(function() {
+                observer.disconnect()
                 gotMessage("observerCallback")
-            }, 1000)
+            }, htmlStates.delayInput);
         }
     }
 });
@@ -66,21 +74,23 @@ function gotMessage(message, sender, sendResponse) {
 
         function mainFunction(imagePicSrc) {
 
+            chrome.runtime.sendMessage(ageObj)
+
             var promise = new Promise(function(resolve, reject) {
-                var currentImgBase64;
                 function toDataURL(src) {
                     var img = new Image();
                     img.crossOrigin = 'Anonymous';
-                    var dataURL;
+                    var currentImgBase64;
                     img.onload = function() {
                         var canvas = document.createElement('CANVAS');
                         var ctx = canvas.getContext('2d');
                         canvas.height = this.naturalHeight;
                         canvas.width = this.naturalWidth;
                         ctx.drawImage(this, 0, 0);
-                        dataURL = canvas.toDataURL('image/jpeg', .8);
-                        currentImgBase64 = dataURL;
-                        resolve(currentImgBase64);
+                        currentImgBase64 = canvas.toDataURL('image/jpeg', .8);
+                        let baseLength = currentImgBase64.length;
+                        currentImgID = currentImgBase64.length + currentImgBase64[baseLength - 10] + currentImgBase64[baseLength - 20] + currentImgBase64[baseLength - 30];
+                        resolve(currentImgID);
                     };
                     img.src = src;
                 }
@@ -90,7 +100,16 @@ function gotMessage(message, sender, sendResponse) {
     
             promise.then(
                 result => {
-                    if (imgBase64Arr.includes(result) === false) { // if no such id are in the arr
+                    let currentIdStr;
+                    function checkBaseExists() {
+                        if (localStorage.getItem("VKGrabberData") !== null) {
+                            currentIdStr = localStorage.getItem("VKGrabberData");
+                            if (currentIdStr.includes(result)) {
+                                return true
+                            } else return false                            
+                        } else return false
+                    }
+                    if (checkBaseExists() === false) { // if no such id are in the arr
                         for (i = 0; i < linesArr.length; i++) { // age pusher
                             if (isNaN(linesArr[i]) === false) {
                                 currentAge = parseInt(linesArr[i], 10);
@@ -100,15 +119,21 @@ function gotMessage(message, sender, sendResponse) {
                             }
                             linesArr[i] = linesArr[i].replace(/\n/g, ' ');
                         }
-                        if (currentAge < 16) { // skip btn press
+                        if (currentAge < parseInt(htmlStates.ageInput, 10)) { // skip btn press
                             console.log(currentAge)
                             console.log("kinda low bruh")
                             skipBtn.click();
                         }
-                        imgBase64Arr.push(result);
+                        if (currentIdStr) {
+                            currentIdStr += "," + result;
+                        } else {
+                            currentIdStr += result;
+                        }
+                        console.log(result)
+                        localStorage.setItem("VKGrabberData", currentIdStr)
                     } else {
                         // Things that ext does when qestrs repeats
-                        //skipBtn.click()
+                        skipBtn.click()
                         console.log('[error:02] Questionnaire repeat')
                     }
                 }
@@ -117,7 +142,6 @@ function gotMessage(message, sender, sendResponse) {
             console.log(currentQuestionnairesText)
             console.log(ageObj)
             console.log(linesArr)
-            console.log(imgBase64Arr)
 
         }
 
@@ -134,7 +158,30 @@ function gotMessage(message, sender, sendResponse) {
         }
 
         callFunction(mainFunction)
-        observer.observe(messageBox, props)
+        observer.observe(messageBox, {childList: true});
+        console.log("after observer")
 
-    } else {console.log('[error:01] Page does not match')}
+    } else {
+        console.log('[error:01] Page does not match')
+        window.location.replace("https://vk.com/dayvinchik")
+    }
 }
+
+
+
+
+
+
+
+
+// let observer = new MutationObserver(mutations => {
+//     console.log(mutations); // console.log(изменения)
+//   });
+  
+//   // наблюдать за всем, кроме атрибутов
+//   let cock = document.querySelector("body");
+//   observer.observe(cock, {
+//     childList: true, // наблюдать за непосредственными детьми
+//     // subtree: true, // и более глубокими потомками
+//     // characterDataOldValue: true // передавать старое значение в колбэк
+//   });

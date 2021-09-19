@@ -22,7 +22,9 @@
     <button id="popup-stop-button">Stop</button>
     <form>
         <label for="ageInput">Minimal Age</label>
-        <input type="number" id="ageInput" min="15"  max="99" value="15" required>
+        <input type="number" id="ageInput" min="15"  max="99" value="16" title="Large values may cause unwanted results." required>
+        <input type="range" id="delayInput" min=".5" max="5" value="1" step=".5" title="Based skip delay">
+        <div><div id="delayInputNum">1</div> sec</div>
     </form>
     <script src="popup.js"></script>
 </body>

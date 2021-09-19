@@ -1,34 +1,40 @@
 const startButton = document.getElementById("pupup-start-button");
 const stopButton = document.getElementById("popup-stop-button");
-const ageInput = document.getElementById("ageInput").value;
+const ageInput = document.getElementById("ageInput");
+const delayInput = document.getElementById("delayInput");
+const delayInputNum = document.querySelector("#delayInputNum");
 
-ageInput.oninput = function() { // counter logick
-    if (this.value > 99) {this.value = 99};
-    if (this.value < 15) {this.value = 15}
+ageInput.oninput = () => { // counter logick
+    if (ageInput.value.length < 2) {ageInput.value = 15};
 }
 
-var htmlStates = { // sends as message
-    state: false,
-    ageInput: ageInput
+delayInput.oninput = () => { // delay logick
+    delayInputNum.innerText = delayInput.value;
 }
 
-function letter(htmlStates) { // принимает объект состояний кнопок
+function letter(buttState) { // accepts buttons states object
+    var htmlStates = { // sends as message
+        state: buttState,
+        ageInput: ageInput.value,
+        delayInput: delayInput.value * 1000,
+        url: null
+    };
     let params = {
         active: true,
         lastFocusedWindow: true
-    }
+    };
     chrome.tabs.query(params, init); 
-    function init(tabs){
+    function init(tabs) {
         htmlStates.url = tabs[0].url;
         chrome.tabs.sendMessage(tabs[0].id, htmlStates);
     }
 }
 
-startButton.onclick = function() {
-    htmlStates.state = true;
-    letter(htmlStates)
+chrome.runtime.onMessage.addListener(letter);
+
+startButton.onclick = () => {
+    letter(true)
 };
-stopButton.onclick = function() {
-    htmlStates.state = false;
-    letter(htmlStates)
+stopButton.onclick = () => {
+    letter(false)
 };
