@@ -1,12 +1,17 @@
 /*
+
 BUGS:
 [solved] For some reason skips all quers despite age. Heeds stop button to be added. :age was in string format
-Popup refreshes input data when closed. Adding localStarage to it might solve the problem.
+[solved] Popup refreshes input data when closed. Adding localStorage to it might solve the problem. :saving vals before popup closing
 Stop button could do better.
-Not always closes big pictures
+Not always closes big pictures.
+Can't work without profile picture.
 
 TO DO LIST:
 Processing questionnaires without photos, processing bot messages.
+Add design.
+Add statistic.
+Try to make verification without full-screen photo by url in a new branch. Doub
 
 ADDED:
 Promise waiting added, bug fixing, so far functionality is quite on the level I wanted it at the beginning but I've got some fancy things to be added.
@@ -14,29 +19,56 @@ Identification of the questionnaire by the length of the base64 string and 5 cha
 Added input age handler.
 Added delay choose.
 Two-way messages added.
+The forwarding of messages between the parties was giving way to the use of chrome storage api. Because the structure is already based on sending messages, the decision to combine chrome api with a ready-made structure was made.
+
 */
 
 chrome.runtime.onMessage.addListener(messageCheck);
 
-var ageObj = new Object(); // stores frequency of appearing certain age
+var ageObj = localStorage.getItem('VKGrabberAgeObj') === null ? new Object() : JSON.parse(localStorage.getItem('VKGrabberAgeObj')); // stores frequency of appearing certain age
 var messageBox; // observer's taget
 var props = {
     childList: true
 };
 var htmlStates;
-// htmlStates.delayInput = 1000;
+window.onbeforeunload = () => {
+    localStorage.setItem('VKGrabberAgeObj', JSON.stringify(ageObj))
+}
 
 function messageCheck(message) { //message sorter
     if (message.state === true) {
-        gotMessage(message)
-    }
-    if (typeof(message.state) === "request") {
         htmlStates = message;
-        console.log(htmlStates)
+        let ifNull = () => {
+            return new Promise((resolve, reject) => {
+                if ((htmlStates.ageInput || htmlStates.delayInput) == null) {
+                    chrome.storage.local.get(['ageInput', 'delayInput'], (input) => {
+                        htmlStates.ageInput = input.ageInput;
+                        htmlStates.delayInput = input.delayInput * 1000;
+                    })
+                    resolve()
+                }
+            })
+        }
+        ifNull()
+        console.log(message)
+        chrome.storage.onChanged.addListener(function(changes) {
+            console.log(changes)
+            if ('ageInput' || 'delayInput' in changes) {
+                chrome.storage.local.get(['ageInput', 'delayInput'], (input) => {
+                    htmlStates.ageInput = input.ageInput;
+                    htmlStates.delayInput = input.delayInput * 1000;
+                })
+            }
+        })
+        gotMessage(message)
     }
     if (message.state === false) {
         observer.disconnect();
         console.log("observer has been disconnected")
+    }
+    if (message.state == 'reset') {
+        localStorage.removeItem('VKGrabberAgeObj')
+        ageObj = {};
     }
 }
 // window.onerror = function(message, source, lineno, colno, error) {
@@ -45,10 +77,9 @@ function messageCheck(message) { //message sorter
 //     }
 // }
 var observer = new MutationObserver(mutations => {
-    console.log(mutations)
     for (let mutation of mutations) {
         if ((mutation.addedNodes.length > 0) && (!mutation.nextSibling) && (mutation.addedNodes[0].innerText.includes("Нашел кое-кого для тебя, смотри:")) && (/(^(?:\S+\s+\n?){1,2})/.exec(mutation.addedNodes[0].innerText)[0] == 'Леонардо Дайвинчик ')) {
-            console.log('some suspesious text')
+            console.log('verified')
             setTimeout(function() {
                 observer.disconnect()
                 gotMessage("observerCallback")
@@ -69,12 +100,9 @@ function gotMessage(message, sender, sendResponse) {
         var currentAge;
         var closeBtn;
         var imagePicSrc;
-
         imagePic.click()
 
         function mainFunction(imagePicSrc) {
-
-            chrome.runtime.sendMessage(ageObj)
 
             var promise = new Promise(function(resolve, reject) {
                 function toDataURL(src) {
@@ -97,7 +125,7 @@ function gotMessage(message, sender, sendResponse) {
                 toDataURL(imagePicSrc)
                 console.log(imagePicSrc)
             });
-    
+
             promise.then(
                 result => {
                     let currentIdStr;
@@ -106,7 +134,7 @@ function gotMessage(message, sender, sendResponse) {
                             currentIdStr = localStorage.getItem("VKGrabberData");
                             if (currentIdStr.includes(result)) {
                                 return true
-                            } else return false                            
+                            } else return false
                         } else return false
                     }
                     if (checkBaseExists() === false) { // if no such id are in the arr
@@ -121,7 +149,7 @@ function gotMessage(message, sender, sendResponse) {
                         }
                         if (currentAge < parseInt(htmlStates.ageInput, 10)) { // skip btn press
                             console.log(currentAge)
-                            console.log("kinda low bruh")
+                            console.log("Lower than minimal age")
                             skipBtn.click();
                         }
                         if (currentIdStr) {
@@ -131,6 +159,7 @@ function gotMessage(message, sender, sendResponse) {
                         }
                         console.log(result)
                         localStorage.setItem("VKGrabberData", currentIdStr)
+                        chrome.storage.local.set({ageObjectKeys: Object.keys(ageObj), ageObjectVals: Object.values(ageObj)})
                     } else {
                         // Things that ext does when qestrs repeats
                         skipBtn.click()
@@ -138,10 +167,11 @@ function gotMessage(message, sender, sendResponse) {
                     }
                 }
             );
-            
+
             console.log(currentQuestionnairesText)
             console.log(ageObj)
             console.log(linesArr)
+            console.log(htmlStates.delayInput, htmlStates.ageInput)
 
         }
 
@@ -159,7 +189,6 @@ function gotMessage(message, sender, sendResponse) {
 
         callFunction(mainFunction)
         observer.observe(messageBox, {childList: true});
-        console.log("after observer")
 
     } else {
         console.log('[error:01] Page does not match')
@@ -177,7 +206,7 @@ function gotMessage(message, sender, sendResponse) {
 // let observer = new MutationObserver(mutations => {
 //     console.log(mutations); // console.log(изменения)
 //   });
-  
+
 //   // наблюдать за всем, кроме атрибутов
 //   let cock = document.querySelector("body");
 //   observer.observe(cock, {

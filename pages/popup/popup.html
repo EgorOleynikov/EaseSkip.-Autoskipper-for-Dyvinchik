@@ -4,18 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/packages/chart.min.js"></script>
+    <link rel="stylesheet" href="popup.css">
     <title>Popup</title>
-    <style>
-        body{
-            height: 270px;
-            width: 200px;
-        }
-        button {
-            margin: 10px;
-            width: 137px;
-            font-size: large;
-        }
-    </style>
 </head>
 <body>
     <button id="pupup-start-button">Start</button>
@@ -25,6 +16,9 @@
         <input type="number" id="ageInput" min="15"  max="99" value="16" title="Large values may cause unwanted results." required>
         <input type="range" id="delayInput" min=".5" max="5" value="1" step=".5" title="Based skip delay">
         <div><div id="delayInputNum">1</div> sec</div>
+        <div id="counterNum">0</div>
+        <canvas id="myChart"></canvas>
+        <input type="button" id="resetBtn" value="reset">
     </form>
     <script src="popup.js"></script>
 </body>

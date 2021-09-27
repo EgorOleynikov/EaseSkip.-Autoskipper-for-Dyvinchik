@@ -1,0 +1,14 @@
+body{
+    height: 300px;
+    width: 200px;
+}
+button {
+
+    font-size: large;
+}
+form{
+    display: flex;
+    flex-direction: column;
+}
+#resetBtn{
+}
