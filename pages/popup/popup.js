@@ -1,13 +1,18 @@
 // init
 
-const startButton = document.getElementById("pupup-start-button");
-const stopButton = document.getElementById("popup-stop-button");
+const toggleBox = document.getElementById("toggleBox");
 const ageInput = document.getElementById("ageInput");
 const delayInput = document.getElementById("delayInput");
 const delayInputNum = document.querySelector("#delayInputNum");
 const myChart = document.getElementById("myChart").getContext('2d');
 const counterNum = document.getElementById("counterNum");
 const resetBtn = document.getElementById("resetBtn");
+const idModeBox = document.getElementById("idModeBox");
+const authorBtn = document.getElementById("authorBtn");
+const aboutBtn = document.getElementById("aboutBtn");
+var state = '0';
+localStorage.getItem('state') == '1' ? toggleBox.checked = true : toggleBox.checked = false;
+localStorage.getItem('idState') == '1' ? idModeBox.checked = true : idModeBox.checked = false;
 
 var htmlStates = {
     state: null,
@@ -58,15 +63,40 @@ function letter(message) { // accepts buttons states object
         chrome.tabs.query(params, init);
         function init(tabs) {
             htmlStates.url = tabs[0].url;
-            chrome.tabs.sendMessage(tabs[0].id, htmlStates);
+            htmlStates.state == 'reset' || htmlStates.state == 'idModeDefault' || htmlStates.state == 'idModeLite' ? chrome.tabs.sendMessage(tabs[0].id, htmlStates, afterMessage) : chrome.tabs.sendMessage(tabs[0].id, htmlStates)
+        }
+        function afterMessage(message) {
+            if (message.response == 'received') {
+                console.log('delivered');
+            } else if (message.response == 'rejected') {
+                switch (htmlStates.state) {
+                    case 'reset':
+                        localStorage.setItem('missedReset', '1');
+                        break;
+                    case 'idModeDefault':
+                        localStorage.setItem('missedIdModeDefault', '1');
+                        localStorage.setItem('missedIdModeLite', '0');
+                        break;
+                    case 'idModeLite':
+                        localStorage.setItem('missedIdModeLite', '1');
+                        localStorage.setItem('missedIdModeDefault', '0');
+                        break;
+                }
+                console.log('missed');
+            }
         }
     })
 }
 
+if (localStorage.getItem('about') == '1') {} else { localStorage.setItem('about', '1'); }
+if (localStorage.getItem('missedReset') == '1') {letter('reset'); localStorage.setItem('missedReset', '0')};
+if (localStorage.getItem('missedIdModeDefault') == '1') {letter('idModeDefault'); localStorage.setItem('missedIdModeDefault', '0')};
+if (localStorage.getItem('missedIdModeLite') == '1') {letter('idModeLite'); localStorage.setItem('missedIdModeLite', '0')};
+
 // Canvas area
 
 let ageStats = new Chart(myChart, {
-    type: 'doughnut',
+    type: 'pie', // doughnut
     data:{
         labels: null, // age
         datasets: [{
@@ -79,7 +109,9 @@ let ageStats = new Chart(myChart, {
             hoverBorderWidth: 2
         }]
     },
-    options:{}
+    options:{
+        responsive: false
+    }
 });
 
 function chartUpdate() {
@@ -90,6 +122,12 @@ function chartUpdate() {
             console.log(ageStats.data.labels, dataset)
         });
         ageStats.update();
+        var counter = 0;
+        try {input.ageObjectVals.forEach(element => {
+            counter += element;
+        });}
+        catch {}
+        counterNum.innerText = counter;
     })
 }
 chartUpdate();
@@ -101,14 +139,37 @@ chrome.storage.onChanged.addListener(function(changes) {
 
 //
 
-startButton.onclick = () => {
-    letter(true)
-};
-stopButton.onclick = () => {
-    letter(false)
-};
+toggleBox.onchange = () => {
+    if (toggleBox.checked) {
+        localStorage.setItem('state', '1');
+        letter(true)
+    } else {
+        localStorage.setItem('state', '0');
+        letter(false)
+    }
+}
+idModeBox.onchange = () => {
+    if (idModeBox.checked) {
+        localStorage.setItem('idState', '1')
+        letter('idModeLite');
+    } else {
+        localStorage.setItem('idState', '0')
+        letter('idModeDefault');
+    }
+}
+authorBtn.onclick = () => {
+    letter('author')
+}
+aboutBtn.onclick = () => {
+    localStorage.setItem('about', '0');
+    localStorage.setItem('about', '1');
+}
 resetBtn.onclick = () => {
     letter('reset')
     chrome.storage.local.set({ageObjectKeys: 0, ageObjectVals: 0});
+    localStorage.removeItem('state');
+    localStorage.removeItem('missedIdModeDefault');
+    localStorage.removeItem('missedIdModeLite');
     counterNum.innerText = 0;
+    toggleBox.checked = false;
 }

@@ -1,11 +1,5 @@
 console.log("background is running!");
 
-chrome.browserAction.onClicked.addListener(buttonClicked);
-
-function buttonClicked(tab) {
-    console.log(tab)
-    let msg = {
-        txt: "hello"
-    }
-    chrome.tabs.sendMessage(tab.id, msg);
-}
+window.addEventListener('storage', function(event){
+    event.key == 'about' && event.newValue == '1' ? chrome.tabs.create({ url: chrome.runtime.getURL("../pages/welcome/welcomeEN.html") }) : 0;
+});

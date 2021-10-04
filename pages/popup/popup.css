@@ -1,14 +1,309 @@
-body{
-    height: 300px;
-    width: 200px;
-}
-button {
 
-    font-size: large;
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
 }
-form{
+body{
+    height: 100%;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.block{ /* for all blocks */
+    width: 100%;
+    height: 50px;
+    /* flex-grow: 1;
+    flex-shrink: 1; */
+    max-width: 85%;
+    font-size: 17px;
+}
+.block:nth-child(n+3)::after{
+    content: "";
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 0, 0, .15);
+}
+
+.block1{
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: none;
+    font-size: 13px;
+    height: 57px;
+}
+.block1 img{
+    height: 45px;
+    margin-right: 7px;
+}
+.block1 a{
+    text-decoration: none;
+    color: #0C9B68;
+}
+
+.block2{
+    height: 85px;
+    background: #0C9B68;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: none;
+}
+.block2 .wrap{
+    max-width: 85%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+}
+.block2 .wrap .content{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.block2 .wrap .content p{
+    color: white;
+    max-width: 70%;
+    line-height: 21px;
+}
+.block2 .wrap::after{
+    content: "You must be in dialogue with the bot.";
+    display: block;
+    width: 100%;
+    text-align: center;
+    height: 2px;
+    font-size: 10px;
+    position: relative;
+    top: 6px;
+    color: white;
+}
+
+.block3{
+    height: 70px;
+}
+.block3 .wrap{
+    width: 100%;
+    height: 100%;
+}
+.block3 .content{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.block3 .content p{
+}
+.block3 .content input{
+    max-width: 50px;
+    border-radius: 20px;
+    border: 1px solid #2d9fd9;
+    width: 100%;
+    height: 30px;
+    padding-left: 11px;
+    font-size: 15px;
+}
+.block3 .content input:focus {
+    outline: none;
+    border: 1px solid #a0d18c;
+}
+.block3 .wrap::after{
+    content: "Minimum suitable age.";
+    display: block;
+    width: 100%;
+    text-align: center;
+    height: 10px;
+    font-size: 10px;
+    position: relative;
+    bottom: 15px;
+    color: rgba(0, 0, 0, .5);
+}
+
+.block4{
+    height: 70px;
+}
+.block4 .wrap{
+    width: 100%;
+    height: 100%;
+}
+.block4 .content{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.block4 .content p:first-child{
+    padding-bottom: 10px;
+}
+.block4 .content .delay-input{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    max-height: 30px;
+}
+.block4 .content .delay-input .delay-input-num{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.block4 .content .delay-input .delay-input-num p{
+    padding: 2px;
+    font-size: 14px;
+}
+.block4 .content input{
+    max-width: 120px;
+    border-radius: 20px;
+    border: 1px solid #2d9fd9;
+    width: 250px;
+    height: 30px;
+}
+.block4 .content input:focus {
+    outline: none;
+    border: 1px solid #a0d18c;
+}
+.block4 .wrap::after{
+    content: "Delay between questionnaires processing.";
+    display: block;
+    width: 100%;
+    text-align: center;
+    height: 10px;
+    font-size: 10px;
+    position: relative;
+    bottom: 15px;
+    color: rgba(0, 0, 0, .5);
+}
+
+.block5{
     display: flex;
     flex-direction: column;
 }
-#resetBtn{
+.block5 .content .total{
+    width: 55px;
+    display: flex;
+    justify-content: space-between;
+}
+.block5 .content .sign{
+    text-align: center;
+    margin: 10px 0;
+}
+.block5 .content .sign::after{
+    content: "";
+    display: block;
+    width: 39%;
+    margin: 0 auto;
+    height: 2px;
+    background: rgba(0, 0, 0, .15);
+}
+.block5 canvas{
+    margin-bottom: 10px;
+}
+.block5 .buttons{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.buttons-wrap{
+    display: flex;
+    justify-content: space-between;
+}
+.block5 .buttons-wrap input{
+    margin-bottom: 5px;
+    margin-right: 3px;
+    align-self: flex-end;
+    width: 70px;
+    border-radius: 0;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    color: white;
+    background: #5DA9E9;
+    padding: 2px 4px;
+    transition: 2s;
+    font-size: 12px;
+}
+.block5 .buttons-wrap input:hover{
+    background: #0053ba;
+}
+.block5 .check-wrap{
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+.block5 .check-wrap label{
+    margin-right: 5px;
+}
+.block5 .check-wrap input{
+    background: green;
+}
+.block5::after{
+    position: absolute;
+    bottom: 27px;
+    max-width: 225px;
+    right: 12px;
+}
+.block5 .check-wrap img{
+    position: relative;
+    width: 16px;
+    height: 16px;
+    top: 2px;
+    left: 11px;
+}
+.block5 .check-wrap #hint{
+    opacity: 0;
+    transition: 1s;
+    width: 0px;
+    height: 0;
+    max-height: 470px;
+    position: absolute;
+    top: 10%;
+    left: 7%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 20px 10px;
+    border-radius: 6px;
+    content: "Some text";
+    overflow: hidden;
+}
+.block5 .check-wrap #hint::after{
+    content: " ";
+    position: absolute;
+    top: 100%; /* At the bottom of the tooltip */
+    left: 75%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+.block5 .check-wrap img:hover + #hint{
+    width: 215px;
+    height: 470px;
+    opacity: .8;
+}
+
+/* Fonts */
+
+.block{
+    font-family: 'Roboto Slab', serif;
+}
+.block1{
+    font-family: 'Sen', sans-serif;
+}
+.block2 .wrap::after,
+.block3 .wrap::after,
+.block4 .wrap::after,
+.block5 .check-wrap,
+.total{
+    font-family: 'Lato', sans-serif;
 }

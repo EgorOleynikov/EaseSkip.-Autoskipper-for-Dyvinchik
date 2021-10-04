@@ -1,0 +1,134 @@
+body{
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+body *:not(img){
+    transform-origin: 50% 100%;
+}
+#bg-img{
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -10;
+    width: 100%;
+    height: 100%;
+    filter: blur(2px);
+}
+#bg-ref{
+    text-decoration: none;
+    position: absolute;
+    top: 95%;
+    left: 87%;
+    color: white;
+    opacity: .8;
+}
+.main-wrap{
+    height: 85%;
+    width: 45%;
+    background: rgba(15, 75, 85, .5);
+    box-shadow: 0 0 5px 5px rgba(15, 75, 85, .57);
+    border-radius: 5%;
+    opacity: .9;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    z-index: -1;
+    animation: bodyOpasity 3s;
+}
+.main-wrap *{
+    opacity: 1;
+    position: relative;
+    max-width: 90%;
+    z-index: 1;
+}
+h1{
+    /* color: #0C9B68; */
+    font-size: 3.5rem;
+    animation: appearing 2s;
+    margin-top: 20px;
+    margin-bottom: 0px;
+}
+h2:first-of-type{
+    font-size: 1.5rem;
+    animation: appearing 3s;
+    margin-top: 10px;
+}
+h2{
+    text-align: center;
+    font-size: 1.3rem;
+    animation: appearing 4s;
+}
+h2:first-of-type span{
+    font-weight: bolder;
+    color: #21b882;
+    -webkit-text-stroke: 1px rgba(5, 33, 4, .8);
+    font-size: 2rem;
+    text-shadow: 2px 2px;
+}
+h2 span{
+    color: #21b882;
+}
+.main-wrap ul{
+    font-size: 1.2rem;
+}
+.main-wrap ul li{
+    margin: 5px 0;
+}
+.main-wrap ul li:nth-child(1){
+    animation: appearing 5s;
+}
+.main-wrap ul li:nth-child(2){
+    animation: appearing 5.3s;
+}
+.main-wrap ul li:nth-child(3){
+    animation: appearing 5.6s;
+}
+.main-wrap li a{
+    z-index: 10;
+}
+.main-wrap p{
+    font-size: 1.2rem;
+    animation: appearing 5.9s;
+}
+.main-wrap img{
+    position: absolute;
+    left: calc(50% - 25px);
+    animation: why 5.6s;
+}
+
+
+@keyframes appearing {
+    from {
+        transform: translateX(0px) translateX(-1000px);
+        opacity: 0;
+    }
+    to {
+
+    }
+}
+@keyframes bodyOpasity {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: .9;
+    }
+}
+@keyframes why {
+    from {
+        opacity: 0;
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
