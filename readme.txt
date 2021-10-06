@@ -1,5 +1,7 @@
 Расширение для chrome браузеров позволяющее удобнее взаимодействовать с VK ботом Дайвинчик. Автоматический пропуск анкет неподходящего возраста и статистика.
 
+An extension for chrome browsers that allows you to more conveniently interact with the Dyvinchik VK bot. Automatic skipping of questionnaires of unsuitable age and statistics.
+
 /*
 
 BUGS:
