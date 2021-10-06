@@ -180,7 +180,7 @@ aboutBtn.onclick = () => {
     localStorage.setItem('about', '1');
 }
 langBtn.onclick = () => {
-    chrome.browserAction.setPopup({popup: "pages/popupRU/popup.html"});
+    chrome.browserAction.setPopup({popup: "pages/popup/popup.html"});
     window.close();
 }
 resetBtn.onclick = () => {

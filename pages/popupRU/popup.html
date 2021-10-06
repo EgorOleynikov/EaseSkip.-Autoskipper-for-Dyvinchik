@@ -25,7 +25,7 @@
     <div class="block block2">
         <div class="wrap">
             <div class="content">
-                <p>Start capturing bot’s messages</p>
+                <p>Запустить</p>
                 <label class="switch">
                     <input id="toggleBox" type="checkbox" autofocus>
                     <span class="slider round"></span>
@@ -37,12 +37,12 @@
     <div class="block block3">
         <div class="wrap">
             <div class="content content-left">
-                <p>Minimum age</p>
-                <input type="number" id="minAgeInput" min="15"  max="98" value="16" title="Minimum acceptable age" required>
+                <p>Не моложе:</p>
+                <input type="number" id="minAgeInput" min="15"  max="98" value="16" title="Минимальный приемлимый возраст включительно" required>
             </div>
             <div class="content content-right">
-                <p>Maximum age</p>
-                <input type="number" id="maxAgeInput" min="15"  max="99" value="25" title="Maximum acceptable age" required>
+                <p>Не старше:</p>
+                <input type="number" id="maxAgeInput" min="15"  max="99" value="25" title="Максимально приемлимый возраст включительно" required>
             </div>
         </div>
     </div>
@@ -50,10 +50,10 @@
     <div class="block block4">
         <div class="wrap">
             <div class="content">
-                <p>Delay</p>
+                <p>Задержка</p>
                 <div class="delay-input">
-                    <input type="range" id="delayInput" min=".5" max="5" value="1" step=".5" title="Based skip delay">
-                    <div class="delay-input-num"><p id="delayInputNum">1</p> <p>second</p></div>
+                    <input type="range" id="delayInput" min=".5" max="5" value="1" step=".5" title="Базовая задержка перед обработкой">
+                    <div class="delay-input-num"><p id="delayInputNum">1</p><p>сек.</p></div>
                 </div>
             </div>
         </div>
@@ -61,22 +61,22 @@
 
     <div class="block block5">
         <div class="content">
-            <p class="sign">Statistics</p>
-            <div class="total"><p>Total: </p><p id="counterNum">0</p></div>
+            <p class="sign">Статистика</p>
+            <div class="total"><p>Число анкет: </p><p id="counterNum">0</p></div>
         </div>
         <canvas id="myChart" height="190px"></canvas>
         <div class="buttons">
             <div class="check-wrap">
-                <label for="idModeBox">Use lite ID mode</label>
+                <label for="idModeBox">Простой ID режим</label>
                 <input type="checkbox" id="idModeBox" name="idModeBox">
                 <img src="../../icons/info.png" alt="">
-                <span id="hint"><p>The extension uses a system for identifying profiles through photographs. The difference between the easy mode and the normal mode is in different ways of getting the identifier, and also the normal mode opens the photo in full screen ;-).</p> <p>The extension does not store or send original photos, like any other confidential information about the User.</p></span>
+                <span id="hint"><p>Расширение использует систему идентификации профилей по фотографиям. Разница между легким режимом и обычным режимом заключается в разных способах получения идентификатора, а также в обычном режиме фотография открывается в полноэкранном режиме ;-).</p> <p>Расширение не хранит и не отправляет оригинальные фотографии, как и любую другую конфиденциальную информацию о Пользователе.</p></span>
             </div>
             <div class="buttons-wrap">
-                <input type="button" id="authorBtn" value="Author">
-                <input type="button" id="aboutBtn" value="About">
-                <input type="button" id="resetBtn" value="Reset">
-                <input type="button" id="langBtn" value="RU">
+                <input type="button" id="authorBtn" value="Автор">
+                <input type="button" id="aboutBtn" value="Инстукция">
+                <input type="button" id="resetBtn" value="Сброс">
+                <input type="button" id="langBtn" value="EN">
             </div>
         </div>
     </div>

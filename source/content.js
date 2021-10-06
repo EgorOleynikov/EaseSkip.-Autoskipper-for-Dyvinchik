@@ -6,9 +6,9 @@ BUGS:
 [solved] Stop button could do better. :now it does. Stop-word added.
 [~solved] Not always closes big pictures. :idk why it still leaves them open, the code gets close button and presses it. The error fires when delay set too low.
 [solved] Can't work without profile picture. :now the code has workarounds for such cases.
+[solved] input values are null sometimes at js.230. :resolve was called before the thing was done.
 
 TO DO LIST:
-Try to make  in a new branch. Doub
 
 ADDED:
 Promise waiting added, bug fixing, so far functionality is quite on the level I wanted it at the beginning but I've got some fancy things to be added.
@@ -22,6 +22,9 @@ Pretty design added.
 Fancy-looking statistic added.
 Verification without full-screen photo by url added.
 Added a counter of missed messages with a response to the popup, so that if the reconnect is successful, undelivered messages will be sent again.
+Max age input handler.
+Language swap.
+About pages.
 
 */
 
@@ -30,15 +33,27 @@ chrome.runtime.onMessage.addListener(messageCheck);
 var ageObj = localStorage.getItem('VKGrabberAgeObj') === null ? new Object() : JSON.parse(localStorage.getItem('VKGrabberAgeObj')); // stores frequency of appearing certain age
 var idMode = localStorage.getItem('idMode') === null ? 'default' : localStorage.getItem('idMode');
 var messageBox; // observer's taget
+var htmlStates;
+var stopWord = 0;
 var props = {
     childList: true
 };
-var htmlStates;
+
 window.onbeforeunload = () => {
     localStorage.setItem('VKGrabberAgeObj', JSON.stringify(ageObj));
     localStorage.setItem('idMode', idMode == 'default' ? 'default' : 'lite');
 }
-var stopWord = 0;
+
+chrome.storage.onChanged.addListener(function(changes) {
+    console.log(changes)
+    if ('minAgeInput' || 'maxAgeInput' || 'delayInput' in changes) {
+        chrome.storage.local.get(['minAgeInput', 'maxAgeInput', 'delayInput'], (input) => {
+            htmlStates.minAgeInput = input.minAgeInput;
+            htmlStates.maxAgeInput = input.maxAgeInput;
+            htmlStates.delayInput = input.delayInput * 1000;
+        })
+    }
+})
 
 function messageCheck(message, sender, sendResponse) { //message sorter
     if (message.state === true) {
@@ -46,9 +61,10 @@ function messageCheck(message, sender, sendResponse) { //message sorter
         htmlStates = message;
         let ifNull = () => {
             return new Promise((resolve, reject) => {
-                if ((htmlStates.ageInput || htmlStates.delayInput) == null) {
-                    chrome.storage.local.get(['ageInput', 'delayInput'], (input) => {
-                        htmlStates.ageInput = input.ageInput;
+                if ((htmlStates.minAgeInput || htmlStates.maxAgeInput || htmlStates.delayInput) == null) {
+                    chrome.storage.local.get(['minAgeInput', 'maxAgeInput', 'delayInput'], (input) => {
+                        htmlStates.minAgeInput = input.minAgeInput;
+                        htmlStates.maxAgeInput = input.maxAgeInput;
                         htmlStates.delayInput = input.delayInput * 1000;
                     })
                     resolve()
@@ -57,15 +73,6 @@ function messageCheck(message, sender, sendResponse) { //message sorter
         }
         ifNull()
         console.log(message)
-        chrome.storage.onChanged.addListener(function(changes) {
-            console.log(changes)
-            if ('ageInput' || 'delayInput' in changes) {
-                chrome.storage.local.get(['ageInput', 'delayInput'], (input) => {
-                    htmlStates.ageInput = input.ageInput;
-                    htmlStates.delayInput = input.delayInput * 1000;
-                })
-            }
-        })
         gotMessage(message)
     }
     if (message.state === false) {
@@ -196,9 +203,9 @@ function gotMessage(message, sender, sendResponse) {
                             }
                             linesArr[i] = linesArr[i].replace(/\n/g, ' ');
                         }
-                        if (currentAge < parseInt(htmlStates.ageInput, 10)) { // skip btn press
+                        if (currentAge < parseInt(htmlStates.minAgeInput, 10) || currentAge > parseInt(htmlStates.maxAgeInput, 10)) { // skip btn press
                             console.log(currentAge)
-                            console.log("Lower than minimum age")
+                            console.log("Out of orange")
                             skipBtn.click();
                         }
                         if (isWithoutPic === false) {
@@ -222,7 +229,7 @@ function gotMessage(message, sender, sendResponse) {
             console.log(currentQuestionnairesText)
             console.log(ageObj)
             console.log(linesArr)
-            console.log(htmlStates.delayInput, htmlStates.ageInput)
+            console.log(htmlStates.delayInput, htmlStates.minAgeInput, htmlStates.maxAgeInput)
 
         }
 

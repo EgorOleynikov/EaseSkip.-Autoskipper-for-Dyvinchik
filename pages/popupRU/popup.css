@@ -78,17 +78,18 @@ body{
 .block2 .wrap .content p{
     color: white;
     max-width: 70%;
+    font-size: 21px;
     line-height: 21px;
 }
 .block2 .wrap::after{
-    content: "You must be in dialogue with the bot.";
+    content: "Вы должны находиться в диалоге с ботом.";
     display: block;
     width: 100%;
     text-align: center;
     height: 2px;
     font-size: 10px;
     position: relative;
-    top: 6px;
+    top: 15px;
     color: white;
 }
 
@@ -123,6 +124,8 @@ body{
     height: 30px;
     padding-left: 11px;
     font-size: 15px;
+    position: relative;
+    left: 2px;
 }
 .block3 .content input:focus {
     outline: none;
@@ -133,16 +136,16 @@ body{
     width: 100%;
     text-align: center;
     height: 10px;
-    font-size: 9px;
+    font-size: 8px;
     position: relative;
     top: 3px;
     color: rgba(0, 0, 0, .5);
 }
 .block3 .wrap .content-left::after{
-    content: "Minimum suitable age.";
+    content: "Минимальный возраст";
 }
 .block3 .wrap .content-right::after{
-    content: "Maximum suitable age.";
+    content: "Максимальный возраст";
 }
 .block3 .wrap::after{
     position: absolute;
@@ -200,7 +203,7 @@ body{
     border: 1px solid #a0d18c;
 }
 .block4 .wrap::after{
-    content: "Delay between questionnaires processing.";
+    content: "Задержка между обработкой анкет.";
     display: block;
     width: 100%;
     text-align: center;
@@ -216,7 +219,7 @@ body{
     flex-direction: column;
 }
 .block5 .content .total{
-    width: 65px;
+    width: 135px;
     display: flex;
     justify-content: space-between;
 }
@@ -227,7 +230,7 @@ body{
 .block5 .content .sign::after{
     content: "";
     display: block;
-    width: 39%;
+    width: 51%;
     margin: 0 auto;
     height: 2px;
     background: rgba(0, 0, 0, .15);
@@ -264,7 +267,7 @@ body{
 }
 .block5 .check-wrap{
     font-size: 15px;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 .block5 .check-wrap label{
     margin-right: 5px;
